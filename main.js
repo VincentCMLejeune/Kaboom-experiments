@@ -111,6 +111,19 @@ addLevel([
 })
 })
 
+scene("welcome", () => {
+    add([
+        text("SHITTY MARIO"),
+        pos(X_TEXT, Y_TEXT),
+    ]);
+    add([
+        text("Press any key to begin"),
+        pos(X_TEXT, Y_TEXT + 100)
+    ])
+    keyPress(() => go(currentLevel))
+
+})
+
 scene("lose", () => {
     add([
         text("YOU LOST"),
@@ -125,4 +138,4 @@ scene("lose", () => {
 })
 
 
-go("level-1")
+go("welcome")
