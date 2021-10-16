@@ -108,9 +108,6 @@ player.collides("door", () => {
 })
 
 
-
-
-
 addLevel([
     "           =                                                                                                                                                      =",
     "           =                                                                                                                                                      =",
