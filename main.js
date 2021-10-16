@@ -13,8 +13,11 @@ add([
 ]);
 
 loadSprite("hero", "media/mario.png")
+loadSprite("enemy", "media/enemy.png")
+loadSprite("item-box", "media/item-box.png")
+loadSprite("wall", "media/wall.png")
 
-// add something to screen
+
 add([
     sprite("hero"),
     pos(200, 200),
