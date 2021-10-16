@@ -12,3 +12,10 @@ add([
     pos(120, 80),
 ]);
 
+loadSprite("hero", "media/mario.png")
+
+// add something to screen
+add([
+    sprite("hero"),
+    pos(200, 200),
+])
