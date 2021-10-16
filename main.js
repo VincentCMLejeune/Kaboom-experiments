@@ -1,6 +1,8 @@
+
+
 kaboom({
     width:1280, 
-    height:1024,
+    height:640,
     debug:true,
     stretch: true,
     letterbox: true,
@@ -21,7 +23,10 @@ loadSprite("wall", "media/wall.png")
 const player = add([
     sprite("hero"),
     scale(2),
-    pos(200, 200),
+    pos(0, 0),
+    area(),
+    solid(),
+    body(),
 ])
 
 addLevel([
