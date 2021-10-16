@@ -103,7 +103,9 @@ player.collides("enemy", (e, side) => {
     }
 });                         
 
-
+player.collides("door", () => {
+    go("win")
+})
 
 
 
@@ -188,7 +190,8 @@ addLevel([
     "6": () => [
         sprite("door-down"),
         area(),
-        scale(2)
+        scale(2),
+        "door"
     ],
     "s": () => [
         sprite("evil-shroom"),
@@ -224,6 +227,18 @@ scene("lose", () => {
         pos(X_TEXT, Y_TEXT + 100)
     ])
     keyPress(() => go(currentLevel))
+})
+
+scene("win", () => {
+    add([
+        text("YOU WON"),
+        pos(X_TEXT, Y_TEXT),
+    ]);
+    add([
+        text("Press any key to replay"),
+        pos(X_TEXT, Y_TEXT + 100)
+    ])
+    keyPress(() => go("level-1"))
 
 })
 
