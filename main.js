@@ -1,5 +1,8 @@
 const MOVE_SPEED = 240
 const JUMP_FORCE = 10
+const X_TEXT = 120
+const Y_TEXT = 80
+let currentLevel = "level-1"
 
 
 kaboom({
@@ -11,10 +14,18 @@ kaboom({
     background: [0, 0, 0]
 })
 
+loadSprite("hero", "media/mario.png")
+loadSprite("enemy", "media/ennemy.png")
+loadSprite("item-box", "media/item-box.png")
+loadSprite("wall", "media/wall.png")
+loadSprite("spike", "media/spike.png")
+
+scene("level-1", () => {
+
 const player = add([
     sprite("hero"),
     scale(2),
-    pos(0, 0),
+    pos(50, 500),
     area(),
     solid(),
     body(),
@@ -34,27 +45,46 @@ keyPress("space", () => {
 
 add([
     text("Shitty Mario"),
-    pos(120, 80),
+    pos(X_TEXT, Y_TEXT),
 ]);
 
-loadSprite("hero", "media/mario.png")
-loadSprite("enemy", "media/ennemy.png")
-loadSprite("item-box", "media/item-box.png")
-loadSprite("wall", "media/wall.png")
-loadSprite("spike", "media/spike.png")
+player.action(() => {
+    camPos(player.pos);
+    // if (player.pos.y >= FALL_DEATH) {
+    //     go("lose");
+    // }
+});
+
+
+player.collides("danger", () => {
+    go("lose")
+})
 
 
 
 addLevel([
-    "                           ",
-    "                           ",
-    "                           ",
-    "                      =    ",
-    "         ====         =    ",
-    "                      =    ",
-    "                      =    ",
-    "           =^^^=           ",
-    "===========================",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=                      =    ",
+    "=                      =    ",
+    "=                      =    ",
+    "=          =    =      =    ",
+    "=          =^^^^=           ",
+    "============================",
+    "=                           ",
+    "=                           ",
+    "=                           ",
+    "=^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "============================",
 ], {
     // define the size of each block
     width: 40,
@@ -73,4 +103,21 @@ addLevel([
         "danger",
         scale(2)
     ],
-});
+})
+})
+
+scene("lose", () => {
+    add([
+        text("YOU LOST"),
+        pos(X_TEXT, Y_TEXT),
+    ]);
+    add([
+        text("Press any key to replay"),
+        pos(X_TEXT, Y_TEXT + 100)
+    ])
+    keyPress(() => go(currentLevel))
+
+})
+
+
+go("level-1")
