@@ -17,8 +17,16 @@ kaboom({
 loadSprite("hero", "media/mario.png")
 loadSprite("evil-shroom", "media/ennemy.png")
 loadSprite("item-box", "media/item-box.png")
+loadSprite("item-empty", "media/item-empty.png")
 loadSprite("wall", "media/wall.png")
 loadSprite("spike", "media/spike.png")
+loadSprite("pipe-UL", "media/tuyau-UL.png")
+loadSprite("pipe-UR", "media/tuyau-UR.png")
+loadSprite("pipe-DR", "media/tuyau-DR.png")
+loadSprite("pipe-DL", "media/tuyau-DL.png")
+loadSprite("door-down", "media/door-down.png")
+loadSprite("door-up", "media/door-up.png")
+
 
 scene("level-1", () => {
 
@@ -96,6 +104,11 @@ player.collides("enemy", (e, side) => {
 });                         
 
 
+
+
+
+
+
 addLevel([
     "           =                                                                                                                                                      =",
     "           =                                                                                                                                                      =",
@@ -110,9 +123,9 @@ addLevel([
     "           =                                                                                                                                                      =",
     "           =                                                                                                                                                      =",
     "           =                                                                                                                                                      =",
-    "           =                                                                                                                                                      =",
-    "           =                                                                                                                                                      =",
-    "           =                                                                                                                                                      =",
+    "           =                 **?*                                                                                                                                 =",
+    "           =   5      12                                                                                                                                          =",
+    "           =   6      34                                                                                                                                          =",
     "           ========================================================================================================================================================",
     "           =                                                                                                                                                      =",
     "           =                                                                                                                                                      =",
@@ -128,11 +141,53 @@ addLevel([
         solid(),
         scale(2)
     ],
+    "1": () => [
+        sprite("pipe-UL"),
+        area(),
+        solid(),
+    ],
+    "2": () => [
+        sprite("pipe-UR"),
+        area(),
+        solid(),
+    ],
+    "3": () => [
+        sprite("pipe-DL"),
+        area(),
+        solid(),
+    ],
+    "4": () => [
+        sprite("pipe-DR"),
+        area(),
+        solid(),
+    ],
+    "*": () => [
+        sprite("item-empty"),
+        area(),
+        solid(),
+        scale(2),
+    ],
+    "?": () => [
+        sprite("item-box"),
+        area(),
+        solid(),
+        scale(2),
+    ],
     "^": () => [
         sprite("spike"),
         area(),
         solid(),
         "danger",
+        scale(2)
+    ],
+    "5": () => [
+        sprite("door-up"),
+        area(),
+        scale(2)
+    ],
+    "6": () => [
+        sprite("door-down"),
+        area(),
         scale(2)
     ],
     "s": () => [
@@ -144,9 +199,6 @@ addLevel([
         "enemy"
     ]
 })
-
-
-
 })
 
 scene("welcome", () => {
