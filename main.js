@@ -1,5 +1,5 @@
-const MOVE_SPEED = 240
-const JUMP_FORCE = 10
+const MOVE_SPEED = 300
+const JUMP_FORCE = 800
 const X_TEXT = 120
 const Y_TEXT = 80
 let currentLevel = "level-1"
@@ -15,7 +15,7 @@ kaboom({
 })
 
 loadSprite("hero", "media/mario.png")
-loadSprite("enemy", "media/ennemy.png")
+loadSprite("evil-shroom", "media/ennemy.png")
 loadSprite("item-box", "media/item-box.png")
 loadSprite("wall", "media/wall.png")
 loadSprite("spike", "media/spike.png")
@@ -39,7 +39,7 @@ keyDown('left', () => {
 })
 keyPress("space", () => {
     if (player.grounded()) {
-        player.jump();
+        player.jump(JUMP_FORCE);
     }
 });
 
@@ -65,36 +65,63 @@ player.collides("danger", () => {
     go("lose")
 })
 
+function patrol(speed = 60, dir = 1) {
+	return {
+		id: "patrol",
+		require: [ "pos", "area", ],
+		add() {
+			this.on("collide", (obj, side) => {
+				if (side === "left" || side === "right") {
+					dir = -dir;
+				}
+			});
+		},
+		update() {
+			this.move(speed * dir, 0);
+		},
+	};
+}
+
+player.on("ground", (l) => {
+    if (l.is("enemy")) {
+        player.jump(JUMP_FORCE * 1.5);
+        destroy(l);
+    }
+});
+
+player.collides("enemy", (e, side) => {
+    if (side !== "bottom") {
+        go("lose");
+    }
+});                         
 
 
 addLevel([
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =                      =    ",
-    "           =                      =    ",
-    "           =                      =    ",
-    "           =          =    =      =    ",
-    "           =          =^^^^=           ",
-    "           ============================",
-    "           =                           ",
-    "           =                           ",
-    "           =                           ",
-    "           =^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-    "           ============================",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           ========================================================================================================================================================",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =                                                                                                                                                      =",
+    "           =^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=",
+    "           ========================================================================================================================================================",
 ], {
-    // define the size of each block
     width: 40,
     height: 40,
-    // define what each symbol means, by a function returning a comp list (what you'll pass to add())
     "=": () => [
         sprite("wall"),
         area(),
@@ -108,7 +135,18 @@ addLevel([
         "danger",
         scale(2)
     ],
+    "s": () => [
+        sprite("evil-shroom"),
+        area(),
+        solid(),
+        scale(2),
+        patrol(),
+        "enemy"
+    ]
 })
+
+
+
 })
 
 scene("welcome", () => {
@@ -120,7 +158,7 @@ scene("welcome", () => {
         text("Press any key to begin"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go(currentLevel))
+    keyPress(() => go("level-1"))
 
 })
 
@@ -138,4 +176,4 @@ scene("lose", () => {
 })
 
 
-go("welcome")
+go("level-1")
