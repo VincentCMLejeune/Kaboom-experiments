@@ -1,7 +1,9 @@
-kaboom();
+kaboom({"fullscreen":false, "width":1280, "height":1024}
 
-// add a piece of text at position (120, 80)
+)
+
 add([
-    text("hello"),
+    text("Shitty Mario"),
     pos(120, 80),
 ]);
+
