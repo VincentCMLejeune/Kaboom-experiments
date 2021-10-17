@@ -1,14 +1,12 @@
 import patrol from './patrol.js'
 import big from './big.js'
-import fire from './fire.js'
 
 const MOVE_SPEED = 300
-const BULLET_SPEED = 400
+const BULLET_SPEED = 350
 const JUMP_FORCE = 700
 const FALL_DEATH = 750
 const X_TEXT = 120
 const Y_TEXT = 80
-let currentLevel = "level-1"
 
 
 kaboom({
@@ -55,9 +53,9 @@ const LEVELS = [
     "             =   ?   *          *        **                                 ",
     "             =       *          *        **                                   ",
     "             =                           **             =                       ",
-    "             =   =          12     12    **    12      ==                        ",
-    "         b   =  ==          34     34          34     ===                          ",
-    "         c   = ===        ^^34s s s34^ s    s ^34    ====                       ",
+    "        bc   =   =          12     12    **    12      ==                        ",
+    "         =   =  ==          34     34          34     ===                          ",
+    "         =   = ===        ^^34s s s34^ s    s ^34    ====                       ",
     "==================   =  =========================   ===========                    ",
 ],[
     "                                                                                       ***           ",
@@ -150,6 +148,7 @@ const levelConf = {
         sprite("bullet"),
         area(),
         solid(),
+        move(LEFT, BULLET_SPEED),
         "danger",
         scale(2)
     ],
