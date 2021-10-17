@@ -1,5 +1,6 @@
 import patrol from './patrol.js'
 import big from './big.js'
+import verticalmove from './verticalmove.js'
 
 const MOVE_SPEED = 300
 const BULLET_SPEED = 350
@@ -32,7 +33,10 @@ loadSprite("pipe-UR", "media/tuyau-UR.png")
 loadSprite("pipe-DR", "media/tuyau-DR.png")
 loadSprite("pipe-DL", "media/tuyau-DL.png")
 loadSprite("spike", "media/spike.png")
+loadSprite("steel", "media/steel.png")
 loadSprite("wall", "media/wall.png")
+loadSprite("wood", "media/wood.png")
+
 
 loadSound('you-die', 'music/Retrigger_-_You_Will_Die.mp3')
 
@@ -53,7 +57,7 @@ const LEVELS = [
     "                                                                                                     ",
     "                                                                                                     ",
     "                                                                                                     ",
-    "                                                                                                     ",
+    "    xxx                                                                                              ",
     "    5                                                                                              5 ",
     "    6                                                                                              6 ",
     "=====================================================================================================",
@@ -83,6 +87,13 @@ const LEVELS = [
 const levelConf = {
     width: 40,
     height: 40,
+    "x": () => [
+        sprite("wood"),
+        area(),
+        solid(),
+        verticalmove(),
+        scale(2)
+    ],
     "=": () => [
         sprite("wall"),
         area(),
