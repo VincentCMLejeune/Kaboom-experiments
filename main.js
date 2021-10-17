@@ -41,10 +41,9 @@ loadSound('jump', 'sounds/jump.wav')
 loadSound('power-down', 'sounds/power-down.ogg')
 loadSound('power-up', 'sounds/power-up.wav')
 
-// const music = play("you-die", { loop: true, })
+const music = play("you-die", { loop: true, })
 
 scene("level-1", () => {
-
 const player = add([
     sprite("hero"),
     scale(2),
