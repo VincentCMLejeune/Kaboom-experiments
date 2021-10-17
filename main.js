@@ -43,7 +43,7 @@ loadSound('jump', 'sounds/jump.wav')
 loadSound('power-down', 'sounds/power-down.ogg')
 loadSound('power-up', 'sounds/power-up.wav')
 
-// const music = play("you-die", { loop: true, })
+const music = play("you-die", { loop: true, })
 
 // IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
 // 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
@@ -261,10 +261,10 @@ scene("welcome", () => {
         pos(X_TEXT, Y_TEXT),
     ]);
     add([
-        text("Press any key to begin"),
+        text("Press space to begin"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go("game"))
+    keyPress("space", () => go("game"))
     })
     
 scene("lose", () => {
@@ -274,10 +274,11 @@ scene("lose", () => {
         pos(X_TEXT, Y_TEXT),
     ]);
     add([
-        text("Press any key to replay"),
+        text("Press space to replay"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go("game"))
+    
+    keyPress("space", () => go("game"))
     })
     
 scene("win", () => {
@@ -286,10 +287,10 @@ scene("win", () => {
         pos(X_TEXT, Y_TEXT),
     ]);
     add([
-        text("Press any key to replay"),
+        text("Press space to replay"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go("game"))
+    keyPress("space", () => go("game"))
 })
 
-go("game")
+go("welcome")
