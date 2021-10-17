@@ -2,11 +2,11 @@ import patrol from './patrol.js'
 import big from './big.js'
 
 const MOVE_SPEED = 300
+const BULLET_SPEED = 350
 const JUMP_FORCE = 700
 const FALL_DEATH = 750
 const X_TEXT = 120
 const Y_TEXT = 80
-let currentLevel = "level-1"
 
 
 kaboom({
@@ -18,6 +18,8 @@ kaboom({
     background: [0, 0, 0]
 })
 
+loadSprite("bullet", "media/bullet.png")
+loadSprite("canon", "media/canon.png")
 loadSprite("door-up", "media/door-up.png")
 loadSprite("door-down", "media/door-down.png")
 loadSprite("evil-shroom", "media/ennemy.png")
@@ -41,97 +43,34 @@ loadSound('jump', 'sounds/jump.wav')
 loadSound('power-down', 'sounds/power-down.ogg')
 loadSound('power-up', 'sounds/power-up.wav')
 
-const music = play("you-die", { loop: true, })
-
-scene("level-1", () => {
-const player = add([
-    sprite("hero"),
-    scale(2),
-    pos(0, 0),
-    area(),
-    solid(),
-    body(),
-    big(),
-])
-
-keyDown('right', () => {
-    player.move(MOVE_SPEED, 0)
-})
-keyDown('left', () => {
-    player.move(-MOVE_SPEED, 0)
-})
-keyPress("space", () => {
-    if (player.grounded()) {
-        player.jump(JUMP_FORCE);
-        play('jump')
-    }
-});
-
-player.action(() => {
-    camPos(player.pos.x, 250);
-    if (player.pos.y >= FALL_DEATH) {
-        go("lose");
-    }
-});
-
-
-player.collides("danger", () => {
-    go("lose")
-})
-
-player.on("ground", (l) => {
-    if (l.is("enemy")) {
-        player.jump(JUMP_FORCE * 1.5);
-        destroy(l);
-        play('explosion')
-    }
-});
-
-player.collides("enemy", (e, side) => {
-    if (side !== "bottom") {
-        if (!player.isBig()) {
-            go("lose")
-        }
-        else {
-            player.smallify()
-            destroy(e)
-            play('power-down')
-        }
-    }
-});
-
-
-player.collides("mushroom", (a) => {
-    // play('power-up')
-    destroy(a);
-    player.biggify(3);
-});
-
-
-player.on("headbutt", (obj) => {
-    if (obj.is("box-mushroom")) {
-        const mushroom = level.spawn("M", obj.gridPos.sub(0, 1));
-        destroy(obj)
-    }
-});
-
-player.collides("door", () => {
-    play('door')
-    go("win")
-})
+// const music = play("you-die", { loop: true, })
 
 // IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
 // 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
-const level = addLevel([
-    "                                                                                       ***           ",
-    "                                             *                                                       ",
-    "                                            ***                                 ***          ***     ",
-    "                                           *****           12             ***                        ",
-    "    ***      ?       12        12   ?     *******          34         12               ***           ",
-    "         12     12   34        34        *********       ****         34        ***                5 ",
-    "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
-    "==================   ==============================     ================                          ===",
-], {
+const LEVELS = [
+    [
+        "                                                                                       ***           ",
+        "                                             *                                                       ",
+        "                                            ***                                 ***          ***     ",
+        "                                           *****           12             ***                        ",
+        "    ***      ?       12        12   ?     *******          34         12               ***           ",
+        "         12     12   34        34        *********       ****         34        ***                5 ",
+        "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+        "==================   ==============================     ================                          ===",
+    ],
+    [
+    "       ^          ^        ^^             ?                   ?**  b                  *              ",
+    "   ?   *          *        **                                                        **              ",
+    "       *          *        **                                     **     b           **              ",
+    "                           **             =                   =         b   **      ***  12          ",
+    "   =          12     12    **    12      ==                 b==                b    ***  34          ",
+    "  ==          34     34          34     ===                 === **      **      b  ****  34  12    5 ",
+    " ===        ^^34s s s34^ s    s ^34    ====               b====                   b****  34  34    6 ",
+    "====   =  =========================   =========================     **          *******  34  34  ====",
+],
+]
+
+const levelConf = {
     width: 40,
     height: 40,
     "=": () => [
@@ -205,10 +144,117 @@ const level = addLevel([
         scale(2),
         patrol(),
         "enemy"
-    ]
-})
-})
+    ],
+    "b": () => [
+        sprite("bullet"),
+        area(),
+        solid(),
+        patrol(BULLET_SPEED, 1),
+        "enemy",
+        scale(2)
+    ],
+    "c": () => [
+        sprite("canon"),
+        area(),
+        solid(),
+        scale(2),
+    ],
 
+}
+
+
+scene("game", ({levelId} = {levelId:0}) => {
+
+    const level = addLevel(LEVELS[levelId ?? 0], levelConf)
+    
+    const player = add([
+        sprite("hero"),
+        scale(2),
+        pos(0, 0),
+        area(),
+        solid(),
+        body(),
+        big(),
+    ])
+    
+    keyDown('right', () => {
+        player.move(MOVE_SPEED, 0)
+    })
+    keyDown('left', () => {
+        player.move(-MOVE_SPEED, 0)
+    })
+    keyPress("space", () => {
+        if (player.grounded()) {
+            player.jump(JUMP_FORCE);
+            play('jump')
+        }
+    });
+    
+    player.action(() => {
+        camPos(player.pos.x, 250);
+        if (player.pos.y >= FALL_DEATH) {
+            go("lose");
+        }
+    });
+    
+    
+    player.collides("danger", (e) => {
+        if (!player.isBig()) {
+            go("lose")
+        }
+        else {
+            player.smallify()
+            destroy(e)
+            play('power-down')
+        }
+    })
+    
+    player.on("ground", (l) => {
+        if (l.is("enemy")) {
+            player.jump(JUMP_FORCE * 1.5);
+            destroy(l);
+            play('explosion')
+        }
+    });
+    
+    player.collides("enemy", (e, side) => {
+        if (side !== "bottom") {
+            if (!player.isBig()) {
+                go("lose")
+            }
+            else {
+                player.smallify()
+                destroy(e)
+                play('power-down')
+            }
+        }
+    });
+    
+    
+    player.collides("mushroom", (a) => {
+        destroy(a);
+        player.biggify(3);
+    });
+    
+    
+    player.on("headbutt", (obj) => {
+        if (obj.is("box-mushroom")) {
+            const mushroom = level.spawn("M", obj.gridPos.sub(0, 1));
+            destroy(obj)
+        }
+    });
+    
+    player.collides("door", () => {
+        play('door')
+		if (levelId + 1 < LEVELS.length) {
+			go("game", {
+                levelId: levelId + 1,
+			});
+		} else {
+            go("win")
+		}
+    })})
+    
 scene("welcome", () => {
     add([
         text("MARIO ?!"),
@@ -218,10 +264,9 @@ scene("welcome", () => {
         text("Press any key to begin"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go("level-1"))
-
-})
-
+    keyPress(() => go("game"))
+    })
+    
 scene("lose", () => {
     play('death')
     add([
@@ -232,9 +277,9 @@ scene("lose", () => {
         text("Press any key to replay"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go(currentLevel))
-})
-
+    keyPress(() => go("game"))
+    })
+    
 scene("win", () => {
     add([
         text("YOU WON"),
@@ -244,9 +289,7 @@ scene("win", () => {
         text("Press any key to replay"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    keyPress(() => go("level-1"))
-
+    keyPress(() => go("game"))
 })
 
-
-go("welcome")
+go("game")
