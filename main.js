@@ -1,7 +1,9 @@
 import patrol from './patrol.js'
 import big from './big.js'
+import fire from './fire.js'
 
 const MOVE_SPEED = 300
+const BULLET_SPEED = 400
 const JUMP_FORCE = 700
 const FALL_DEATH = 750
 const X_TEXT = 120
@@ -41,29 +43,29 @@ loadSound('jump', 'sounds/jump.wav')
 loadSound('power-down', 'sounds/power-down.ogg')
 loadSound('power-up', 'sounds/power-up.wav')
 
-const music = play("you-die", { loop: true, })
+// const music = play("you-die", { loop: true, })
 
 // IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
 // 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
-const LEVELS = [[
+const LEVELS = [
+    [
+    "             =       ^          ^        ^^             ?                     ",
+    "             =   ?   *          *        **                                 ",
+    "             =       *          *        **                                   ",
+    "             =                           **             =                       ",
+    "             =   =          12     12    **    12      ==                        ",
+    "             =  ==          34     34          34     ===                          ",
+    "             = ===        ^^34s s s34^ s    s ^34    ====                       ",
+    "==================   =  =========================   ===========                    ",
+],[
     "                                                                                       ***           ",
     "                                             *                                                       ",
     "                                            ***                                 ***          ***     ",
     "                                           *****           12             ***                        ",
     "    ***      ?       12        12   ?     *******          34         12               ***           ",
-    "  5      12     12   34        34        *********       ****         34        ***                5 ",
-    "  6     s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+    "         12     12   34        34        *********       ****         34        ***                5 ",
+    "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
     "==================   ==============================     ================                          ===",
-],
-[
-    "          ",
-    "          ",
-    "          ",
-    "          ",
-    "          ",
-    "          ",
-    "          ",
-    "==========",
 ],
 ]
 
@@ -180,8 +182,15 @@ scene("game", ({levelId} = {levelId:0}) => {
     });
     
     
-    player.collides("danger", () => {
-        go("lose")
+    player.collides("danger", (e) => {
+        if (!player.isBig()) {
+            go("lose")
+        }
+        else {
+            player.smallify()
+            destroy(e)
+            play('power-down')
+        }
     })
     
     player.on("ground", (l) => {
