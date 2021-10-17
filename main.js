@@ -249,4 +249,4 @@ scene("win", () => {
 })
 
 
-go("level-1")
+go("welcome")
