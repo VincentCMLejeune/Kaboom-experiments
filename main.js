@@ -28,6 +28,9 @@ loadSprite("pipe-DL", "media/tuyau-DL.png")
 loadSprite("door-down", "media/door-down.png")
 loadSprite("door-up", "media/door-up.png")
 
+loadSound('you-die', 'music/Retrigger_-_You_Will_Die.mp3')
+
+// const music = play("you-die", { loop: true, })
 
 scene("level-1", () => {
 
