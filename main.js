@@ -18,21 +18,28 @@ kaboom({
     background: [0, 0, 0]
 })
 
-loadSprite("hero", "media/mario.png")
+loadSprite("door-up", "media/door-up.png")
+loadSprite("door-down", "media/door-down.png")
 loadSprite("evil-shroom", "media/ennemy.png")
+loadSprite("hero", "media/mario.png")
 loadSprite("item-box", "media/item-box.png")
 loadSprite("item-empty", "media/item-empty.png")
-loadSprite("wall", "media/wall.png")
-loadSprite("spike", "media/spike.png")
+loadSprite("mushroom", "media/mushroom.png")
 loadSprite("pipe-UL", "media/tuyau-UL.png")
 loadSprite("pipe-UR", "media/tuyau-UR.png")
 loadSprite("pipe-DR", "media/tuyau-DR.png")
 loadSprite("pipe-DL", "media/tuyau-DL.png")
-loadSprite("door-down", "media/door-down.png")
-loadSprite("door-up", "media/door-up.png")
-loadSprite("mushroom", "media/mushroom.png")
+loadSprite("spike", "media/spike.png")
+loadSprite("wall", "media/wall.png")
 
 loadSound('you-die', 'music/Retrigger_-_You_Will_Die.mp3')
+
+loadSound('door', 'sounds/door.ogg')
+loadSound('death', 'sounds/death_bell.wav')
+loadSound('explosion', 'sounds/explosion.wav')
+loadSound('jump', 'sounds/jump.wav')
+loadSound('power-down', 'sounds/power-down.ogg')
+loadSound('power-up', 'sounds/power-up.wav')
 
 // const music = play("you-die", { loop: true, })
 
@@ -57,6 +64,7 @@ keyDown('left', () => {
 keyPress("space", () => {
     if (player.grounded()) {
         player.jump(JUMP_FORCE);
+        play('jump')
     }
 });
 
@@ -76,6 +84,7 @@ player.on("ground", (l) => {
     if (l.is("enemy")) {
         player.jump(JUMP_FORCE * 1.5);
         destroy(l);
+        play('explosion')
     }
 });
 
@@ -87,15 +96,16 @@ player.collides("enemy", (e, side) => {
         else {
             player.smallify()
             destroy(e)
+            play('power-down')
         }
     }
 });
 
 
 player.collides("mushroom", (a) => {
+    // play('power-up')
     destroy(a);
     player.biggify(3);
-    // play("powerup");
 });
 
 
@@ -107,6 +117,7 @@ player.on("headbutt", (obj) => {
 });
 
 player.collides("door", () => {
+    play('door')
     go("win")
 })
 
@@ -213,6 +224,7 @@ scene("welcome", () => {
 })
 
 scene("lose", () => {
+    play('death')
     add([
         text("YOU LOST"),
         pos(X_TEXT, Y_TEXT),

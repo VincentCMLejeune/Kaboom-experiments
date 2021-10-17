@@ -29,6 +29,7 @@ export default function big() {
 			destScale = 3;
 			timer = time;
 			isBig = true;
+			
 		},
 	};
 }
