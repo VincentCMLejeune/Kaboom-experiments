@@ -20,6 +20,8 @@ kaboom({
     background: [0, 0, 0]
 })
 
+loadSprite("bullet", "media/bullet.png")
+loadSprite("canon", "media/canon.png")
 loadSprite("door-up", "media/door-up.png")
 loadSprite("door-down", "media/door-down.png")
 loadSprite("evil-shroom", "media/ennemy.png")
@@ -54,8 +56,8 @@ const LEVELS = [
     "             =       *          *        **                                   ",
     "             =                           **             =                       ",
     "             =   =          12     12    **    12      ==                        ",
-    "             =  ==          34     34          34     ===                          ",
-    "             = ===        ^^34s s s34^ s    s ^34    ====                       ",
+    "         b   =  ==          34     34          34     ===                          ",
+    "         c   = ===        ^^34s s s34^ s    s ^34    ====                       ",
     "==================   =  =========================   ===========                    ",
 ],[
     "                                                                                       ***           ",
@@ -143,7 +145,21 @@ const levelConf = {
         scale(2),
         patrol(),
         "enemy"
-    ]
+    ],
+    "b": () => [
+        sprite("bullet"),
+        area(),
+        solid(),
+        "danger",
+        scale(2)
+    ],
+    "c": () => [
+        sprite("canon"),
+        area(),
+        solid(),
+        scale(2),
+    ],
+
 }
 
 
