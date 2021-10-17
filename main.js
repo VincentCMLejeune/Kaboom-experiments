@@ -29,6 +29,7 @@ loadSprite("pipe-DR", "media/tuyau-DR.png")
 loadSprite("pipe-DL", "media/tuyau-DL.png")
 loadSprite("door-down", "media/door-down.png")
 loadSprite("door-up", "media/door-up.png")
+loadSprite("mushroom", "media/mushroom.png")
 
 loadSound('you-die', 'music/Retrigger_-_You_Will_Die.mp3')
 
@@ -82,21 +83,27 @@ player.collides("enemy", (e, side) => {
     }
 });                         
 
+player.on("headbutt", (obj) => {
+    if (obj.is("mushroom")) {
+        const mushroom = level.spawn("M", obj.gridPos.sub(0, 1));
+    }
+});
+
 player.collides("door", () => {
     go("win")
 })
 
 // IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
 // 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
-addLevel([
+const level = addLevel([
     "                                                                                       ***           ",
     "                                                                                                     ",
     "                                             *                                  ***          ***     ",
     "                                            ***            12                                        ",
-    "    ***     ?        12        12   ?      *****           34             ***          ***           ",
-    "         12    34    34        34        *********       ****         34        ***                5 ",
-    "        s34    34    34  s  s  34       ***********     *****  s  ^^  34                           6 ",
-    "=================    ==============================     ================                          ===",
+    "    ***      ?       12        12   ?      *****           34         12  ***          ***           ",
+    "  ?      12     12   34        34        *********       ****         34        ***                5 ",
+    "         34 s   34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+    "==================   ==============================     ================                          ===",
 ], {
     width: 40,
     height: 40,
@@ -136,6 +143,12 @@ addLevel([
         sprite("item-box"),
         area(),
         solid(),
+        scale(2),
+        "mushroom",
+    ],
+    "M": () => [
+        sprite("mushroom"),
+        area(),
         scale(2),
     ],
     "^": () => [
