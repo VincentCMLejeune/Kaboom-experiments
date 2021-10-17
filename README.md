@@ -15,3 +15,11 @@ https://opengameart.org/content/boom-pack-2
 https://opengameart.org/content/power-up-level-up-beansjam
 https://opengameart.org/content/death-bell
 https://opengameart.org/content/energy-drain
+
+
+TO BE CONTINUED :
+* New levels
+* Fixing the power up (notably the sound effect)
+* Adding power-ups
+* Fixing the patrol pattern
+* New ennemies ?
