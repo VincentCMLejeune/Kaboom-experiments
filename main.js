@@ -1,4 +1,5 @@
 import patrol from './patrol.js'
+import big from './big.js'
 
 const MOVE_SPEED = 300
 const JUMP_FORCE = 700
@@ -44,6 +45,7 @@ const player = add([
     area(),
     solid(),
     body(),
+    big(),
 ])
 
 keyDown('right', () => {
@@ -79,13 +81,28 @@ player.on("ground", (l) => {
 
 player.collides("enemy", (e, side) => {
     if (side !== "bottom") {
-        go("lose");
+        if (!player.isBig()) {
+            go("lose")
+        }
+        else {
+            player.smallify()
+            destroy(e)
+        }
     }
-});                         
+});
+
+
+player.collides("mushroom", (a) => {
+    destroy(a);
+    player.biggify(3);
+    // play("powerup");
+});
+
 
 player.on("headbutt", (obj) => {
-    if (obj.is("mushroom")) {
+    if (obj.is("box-mushroom")) {
         const mushroom = level.spawn("M", obj.gridPos.sub(0, 1));
+        destroy(obj)
     }
 });
 
@@ -97,12 +114,12 @@ player.collides("door", () => {
 // 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
 const level = addLevel([
     "                                                                                       ***           ",
-    "                                                                                                     ",
-    "                                             *                                  ***          ***     ",
-    "                                            ***            12                                        ",
-    "    ***      ?       12        12   ?      *****           34         12  ***          ***           ",
-    "  ?      12     12   34        34        *********       ****         34        ***                5 ",
-    "         34 s   34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+    "                                             *                                                       ",
+    "                                            ***                                 ***          ***     ",
+    "                                           *****           12             ***                        ",
+    "    ***      ?       12        12   ?     *******          34         12               ***           ",
+    "         12     12   34        34        *********       ****         34        ***                5 ",
+    "  M      34 s   34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
     "==================   ==============================     ================                          ===",
 ], {
     width: 40,
@@ -144,12 +161,14 @@ const level = addLevel([
         area(),
         solid(),
         scale(2),
-        "mushroom",
+        "box-mushroom",
     ],
     "M": () => [
         sprite("mushroom"),
         area(),
         scale(2),
+        body(),
+        "mushroom",
     ],
     "^": () => [
         sprite("spike"),
