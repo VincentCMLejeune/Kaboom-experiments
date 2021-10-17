@@ -87,6 +87,7 @@ player.collides("door", () => {
 })
 
 // IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
+// 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
 addLevel([
     "                                                                                       ***           ",
     "                                                                                                     ",
