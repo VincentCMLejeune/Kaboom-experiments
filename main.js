@@ -1,5 +1,9 @@
+import patrol from './patrol.js'
+import big from './big.js'
+
 const MOVE_SPEED = 300
-const JUMP_FORCE = 800
+const JUMP_FORCE = 700
+const FALL_DEATH = 750
 const X_TEXT = 120
 const Y_TEXT = 80
 let currentLevel = "level-1"
@@ -14,29 +18,41 @@ kaboom({
     background: [0, 0, 0]
 })
 
-loadSprite("hero", "media/mario.png")
+loadSprite("door-up", "media/door-up.png")
+loadSprite("door-down", "media/door-down.png")
 loadSprite("evil-shroom", "media/ennemy.png")
+loadSprite("hero", "media/mario.png")
 loadSprite("item-box", "media/item-box.png")
 loadSprite("item-empty", "media/item-empty.png")
-loadSprite("wall", "media/wall.png")
-loadSprite("spike", "media/spike.png")
+loadSprite("mushroom", "media/mushroom.png")
 loadSprite("pipe-UL", "media/tuyau-UL.png")
 loadSprite("pipe-UR", "media/tuyau-UR.png")
 loadSprite("pipe-DR", "media/tuyau-DR.png")
 loadSprite("pipe-DL", "media/tuyau-DL.png")
-loadSprite("door-down", "media/door-down.png")
-loadSprite("door-up", "media/door-up.png")
+loadSprite("spike", "media/spike.png")
+loadSprite("wall", "media/wall.png")
 
+loadSound('you-die', 'music/Retrigger_-_You_Will_Die.mp3')
+
+loadSound('door', 'sounds/door.ogg')
+loadSound('death', 'sounds/death_bell.wav')
+loadSound('explosion', 'sounds/explosion.wav')
+loadSound('jump', 'sounds/jump.wav')
+loadSound('power-down', 'sounds/power-down.ogg')
+loadSound('power-up', 'sounds/power-up.wav')
+
+// const music = play("you-die", { loop: true, })
 
 scene("level-1", () => {
 
 const player = add([
     sprite("hero"),
     scale(2),
-    pos(500, 500),
+    pos(0, 0),
     area(),
     solid(),
     body(),
+    big(),
 ])
 
 keyDown('right', () => {
@@ -48,24 +64,15 @@ keyDown('left', () => {
 keyPress("space", () => {
     if (player.grounded()) {
         player.jump(JUMP_FORCE);
+        play('jump')
     }
 });
 
-add([
-    text("Hello \nWorld !"),
-    pos(75, 300),
-]);
-
-add([
-    text("Arrows to move \nSpace to jump"),
-    pos(500, 300),
-]);
-
 player.action(() => {
-    camPos(player.pos);
-    // if (player.pos.y >= FALL_DEATH) {
-    //     go("lose");
-    // }
+    camPos(player.pos.x, 250);
+    if (player.pos.y >= FALL_DEATH) {
+        go("lose");
+    }
 });
 
 
@@ -73,64 +80,58 @@ player.collides("danger", () => {
     go("lose")
 })
 
-function patrol(speed = 60, dir = 1) {
-	return {
-		id: "patrol",
-		require: [ "pos", "area", ],
-		add() {
-			this.on("collide", (obj, side) => {
-				if (side === "left" || side === "right") {
-					dir = -dir;
-				}
-			});
-		},
-		update() {
-			this.move(speed * dir, 0);
-		},
-	};
-}
-
 player.on("ground", (l) => {
     if (l.is("enemy")) {
         player.jump(JUMP_FORCE * 1.5);
         destroy(l);
+        play('explosion')
     }
 });
 
 player.collides("enemy", (e, side) => {
     if (side !== "bottom") {
-        go("lose");
+        if (!player.isBig()) {
+            go("lose")
+        }
+        else {
+            player.smallify()
+            destroy(e)
+            play('power-down')
+        }
     }
-});                         
+});
+
+
+player.collides("mushroom", (a) => {
+    // play('power-up')
+    destroy(a);
+    player.biggify(3);
+});
+
+
+player.on("headbutt", (obj) => {
+    if (obj.is("box-mushroom")) {
+        const mushroom = level.spawn("M", obj.gridPos.sub(0, 1));
+        destroy(obj)
+    }
+});
 
 player.collides("door", () => {
+    play('door')
     go("win")
 })
 
-// IL PEUT SAUTER JUSQ'A 7 DE LONGUEUR
-addLevel([
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                                                            ==                        =",
-    "           =                                                                                      ***                            ==     ==                        =",
-    "           =                                                                                                                     ==                               =",
-    "           =                                            *                                  ***          ***                      ==                 **            =",
-    "           =                                           ***            12                                                    ==   ==                ***            =",
-    "           =   ***     ?        12        12   ?      *****           34             ***          ***                       ==   ==               ****            =",
-    "           =              12    34        34         *******         ***         12                                 ?       ==   ==              *****   12       =",
-    "           =        12    34    34        34        *********       ****         34        ***                12            ==   ==          12 ******   34   12 5=",
-    "           =       s34    34    34  s  s  34       ***********     *****  s  ^^  34                           34   s   ^^^  ==   ==          34*******^^^34^^^34 6=",
-    "           =================    ==============================     ================                           =====================     ===========================",
-    "           =================    ==============================     ================                           =====================     ===========================",
-    "           =================    ==============================     ================                           =====================     ===========================",
-    "           =================    ==============================     ================                           =====================     ===========================",
-    "           =================^^^^==============================^^^^^================^^^^^^^^^^^^^^^^^^^^^^^^^^^=====================^^^^^===========================",
-    "           ========================================================================================================================================================",
+// IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
+// 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
+const level = addLevel([
+    "                                                                                       ***           ",
+    "                                             *                                                       ",
+    "                                            ***                                 ***          ***     ",
+    "                                           *****           12             ***                        ",
+    "    ***      ?       12        12   ?     *******          34         12               ***           ",
+    "         12     12   34        34        *********       ****         34        ***                5 ",
+    "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+    "==================   ==============================     ================                          ===",
 ], {
     width: 40,
     height: 40,
@@ -171,6 +172,14 @@ addLevel([
         area(),
         solid(),
         scale(2),
+        "box-mushroom",
+    ],
+    "M": () => [
+        sprite("mushroom"),
+        area(),
+        scale(2),
+        body(),
+        "mushroom",
     ],
     "^": () => [
         sprite("spike"),
@@ -203,7 +212,7 @@ addLevel([
 
 scene("welcome", () => {
     add([
-        text("SHITTY MARIO"),
+        text("MARIO ?!"),
         pos(X_TEXT, Y_TEXT),
     ]);
     add([
@@ -215,6 +224,7 @@ scene("welcome", () => {
 })
 
 scene("lose", () => {
+    play('death')
     add([
         text("YOU LOST"),
         pos(X_TEXT, Y_TEXT),
@@ -240,4 +250,4 @@ scene("win", () => {
 })
 
 
-go("welcome")
+go("level-1")
