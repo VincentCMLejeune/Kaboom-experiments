@@ -1,5 +1,6 @@
 import patrol from './patrol.js'
 import big from './big.js'
+import horizontalmove from './horizontalmove.js'
 
 const MOVE_SPEED = 300
 const BULLET_SPEED = 350
@@ -32,7 +33,10 @@ loadSprite("pipe-UR", "media/tuyau-UR.png")
 loadSprite("pipe-DR", "media/tuyau-DR.png")
 loadSprite("pipe-DL", "media/tuyau-DL.png")
 loadSprite("spike", "media/spike.png")
+loadSprite("steel", "media/steel.png")
 loadSprite("wall", "media/wall.png")
+loadSprite("wood", "media/wood.png")
+
 
 loadSound('you-die', 'music/Retrigger_-_You_Will_Die.mp3')
 
@@ -45,18 +49,16 @@ loadSound('power-up', 'sounds/power-up.wav')
 
 const music = play("you-die", { loop: true, })
 
-// IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
-// 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
 const LEVELS = [
     [
-        "                                                                                       ***           ",
-        "                                             *                                                       ",
-        "                                            ***                                 ***          ***     ",
-        "                                           *****           12             ***                        ",
-        "    ***      ?       12        12   ?     *******          34         12               ***           ",
-        "         12     12   34        34        *********       ****         34        ***                5 ",
-        "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
-        "==================   ==============================     ================                          ===",
+    "                                                                                                     ",
+    "                                             *                                                       ",
+    "                                            ***                                                      ",
+    "                                           *****           12                                        ",
+    "    ***      ?       12        12   ?     *******          34         12          yyyxxx             ",
+    "         12     12   34        34        *********       ****         34                           5 ",
+    "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+    "==================   ==============================     ================                          ===",
     ],
     [
     "       ^          ^        ^^             ?                   ?**  b                  *              ",
@@ -66,13 +68,27 @@ const LEVELS = [
     "   =          12     12    **    12      ==                 b==                b    ***  34          ",
     "  ==          34     34          34     ===                 === **      **      b  ****  34  12    5 ",
     " ===        ^^34s s s34^ s    s ^34    ====               b====                   b****  34  34    6 ",
-    "====   =  =========================   =========================     **          *******  34  34  ====",
-],
+    "====   =  =========================   =========================     **          *******  ==  ==  ====",
+    ],
 ]
 
 const levelConf = {
     width: 40,
     height: 40,
+    "x": () => [
+        sprite("wood"),
+        area(),
+        solid(),
+        horizontalmove(),
+        scale(2)
+    ],
+    "y": () => [
+        sprite("wood"),
+        area(),
+        solid(),
+        horizontalmove(100,2,-1),
+        scale(2)
+    ],
     "=": () => [
         sprite("wall"),
         area(),
@@ -193,14 +209,14 @@ scene("game", ({levelId} = {levelId:0}) => {
     player.action(() => {
         camPos(player.pos.x, 250);
         if (player.pos.y >= FALL_DEATH) {
-            go("lose");
+            go("lose", {levelId})  ;
         }
     });
     
     
     player.collides("danger", (e) => {
         if (!player.isBig()) {
-            go("lose")
+            go("lose", {levelId})
         }
         else {
             player.smallify()
@@ -220,7 +236,7 @@ scene("game", ({levelId} = {levelId:0}) => {
     player.collides("enemy", (e, side) => {
         if (side !== "bottom") {
             if (!player.isBig()) {
-                go("lose")
+                go("lose", {levelId})
             }
             else {
                 player.smallify()
@@ -267,7 +283,7 @@ scene("welcome", () => {
     keyPress("space", () => go("game"))
     })
     
-scene("lose", () => {
+scene("lose", ({levelId}) => {
     play('death')
     add([
         text("YOU LOST"),
@@ -277,8 +293,10 @@ scene("lose", () => {
         text("Press space to replay"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    
-    keyPress("space", () => go("game"))
+
+    keyPress("space", () => go("game", {
+        levelId: levelId
+    }))
     })
     
 scene("win", () => {
