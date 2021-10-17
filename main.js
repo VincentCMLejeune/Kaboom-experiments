@@ -1,5 +1,7 @@
+import patrol from './patrol.js'
+
 const MOVE_SPEED = 300
-const JUMP_FORCE = 800
+const JUMP_FORCE = 700
 const FALL_DEATH = 750
 const X_TEXT = 120
 const Y_TEXT = 80
@@ -67,23 +69,6 @@ player.collides("danger", () => {
     go("lose")
 })
 
-function patrol(speed = 60, dir = 1) {
-	return {
-		id: "patrol",
-		require: [ "pos", "area", ],
-		add() {
-			this.on("collide", (obj, side) => {
-				if (side === "left" || side === "right") {
-					dir = -dir;
-				}
-			});
-		},
-		update() {
-			this.move(speed * dir, 0);
-		},
-	};
-}
-
 player.on("ground", (l) => {
     if (l.is("enemy")) {
         player.jump(JUMP_FORCE * 1.5);
@@ -101,7 +86,7 @@ player.collides("door", () => {
     go("win")
 })
 
-// IL PEUT SAUTER JUSQ'A 7 DE LONGUEUR
+// IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
 addLevel([
     "                                                                                       ***                            ==     ==                        ",
     "                                                                                                                      ==                               ",
@@ -221,4 +206,4 @@ scene("win", () => {
 })
 
 
-go("welcome")
+go("level-1")
