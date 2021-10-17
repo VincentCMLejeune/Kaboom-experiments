@@ -43,20 +43,30 @@ loadSound('jump', 'sounds/jump.wav')
 loadSound('power-down', 'sounds/power-down.ogg')
 loadSound('power-up', 'sounds/power-up.wav')
 
-const music = play("you-die", { loop: true, })
+// const music = play("you-die", { loop: true, })
 
 // IL PEUT SAUTER JUSQ'A 4 DE HAUTEUR
-// 100 ENTRE DEBUT ET PORTE (PEUT AVOIR 101 DE LONGUEUR POUR DONNER PLATEFORME A PORTE)
+
 const LEVELS = [
     [
-        "                                                                                       ***           ",
-        "                                             *                                                       ",
-        "                                            ***                                 ***          ***     ",
-        "                                           *****           12             ***                        ",
-        "    ***      ?       12        12   ?     *******          34         12               ***           ",
-        "         12     12   34        34        *********       ****         34        ***                5 ",
-        "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
-        "==================   ==============================     ================                          ===",
+    "                                                                                                     ",
+    "                                                                                                     ",
+    "                                                                                                     ",
+    "                                                                                                     ",
+    "                                                                                                     ",
+    "    5                                                                                              5 ",
+    "    6                                                                                              6 ",
+    "=====================================================================================================",
+    ],
+    [
+    "                                                                                       ***           ",
+    "                                             *                                                       ",
+    "                                            ***                                 ***          ***     ",
+    "                                           *****           12             ***                        ",
+    "    ***      ?       12        12   ?     *******          34         12               ***           ",
+    "         12     12   34        34        *********       ****         34        ***                5 ",
+    "        s34     34   34  s  s  34       ***********     *****  s  ^^  34                           6 ",
+    "==================   ==============================     ================                          ===",
     ],
     [
     "       ^          ^        ^^             ?                   ?**  b                  *              ",
@@ -67,7 +77,7 @@ const LEVELS = [
     "  ==          34     34          34     ===                 === **      **      b  ****  34  12    5 ",
     " ===        ^^34s s s34^ s    s ^34    ====               b====                   b****  34  34    6 ",
     "====   =  =========================   =========================     **          *******  34  34  ====",
-],
+    ],
 ]
 
 const levelConf = {
@@ -193,14 +203,14 @@ scene("game", ({levelId} = {levelId:0}) => {
     player.action(() => {
         camPos(player.pos.x, 250);
         if (player.pos.y >= FALL_DEATH) {
-            go("lose");
+            go("lose", {levelId})  ;
         }
     });
     
     
     player.collides("danger", (e) => {
         if (!player.isBig()) {
-            go("lose")
+            go("lose", {levelId})
         }
         else {
             player.smallify()
@@ -220,7 +230,7 @@ scene("game", ({levelId} = {levelId:0}) => {
     player.collides("enemy", (e, side) => {
         if (side !== "bottom") {
             if (!player.isBig()) {
-                go("lose")
+                go("lose", {levelId})
             }
             else {
                 player.smallify()
@@ -267,7 +277,7 @@ scene("welcome", () => {
     keyPress("space", () => go("game"))
     })
     
-scene("lose", () => {
+scene("lose", ({levelId}) => {
     play('death')
     add([
         text("YOU LOST"),
@@ -277,8 +287,10 @@ scene("lose", () => {
         text("Press space to replay"),
         pos(X_TEXT, Y_TEXT + 100)
     ])
-    
-    keyPress("space", () => go("game"))
+
+    keyPress("space", () => go("game", {
+        levelId: levelId
+    }))
     })
     
 scene("win", () => {
@@ -293,4 +305,4 @@ scene("win", () => {
     keyPress("space", () => go("game"))
 })
 
-go("welcome")
+go("game")
