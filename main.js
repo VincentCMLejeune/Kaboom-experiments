@@ -1,6 +1,6 @@
 import patrol from './patrol.js'
 import big from './big.js'
-import verticalmove from './verticalmove.js'
+import horizontalmove from './horizontalmove.js'
 
 const MOVE_SPEED = 300
 const BULLET_SPEED = 350
@@ -58,8 +58,8 @@ const LEVELS = [
     "                                                                                                     ",
     "                                                                                                     ",
     "    xxx                                                                                              ",
-    "    5                                                                                              5 ",
-    "    6                                                                                              6 ",
+    "                                                                                                   5 ",
+    "                                                                                                   6 ",
     "=====================================================================================================",
     ],
     [
@@ -91,6 +91,13 @@ const levelConf = {
         sprite("wood"),
         area(),
         solid(),
+        horizontalmove(),
+        scale(2)
+    ],
+    "y": () => [
+        sprite("wood"),
+        area(),
+        // solid(),
         verticalmove(),
         scale(2)
     ],

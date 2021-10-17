@@ -1,4 +1,4 @@
-export default function verticalmove(speed = 100, time = 2, dir = 1) {
+export default function horizontalmove(speed = 100, time = 2, dir = 1) {
 	let timer = time;
 	return {
 		update() {
